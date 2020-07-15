@@ -356,7 +356,28 @@ class HuntMainActivity : AppCompatActivity() {
      * permission.
      */
     private fun removeGeofences() {
-        // TODO: Step 12 add in code to remove the geofences
+        if (!foregroundAndBackgroundLocationPermissionApproved()) {
+            Log.d(TAG, "Permissions turned off! Skipping remove geofences")
+            return
+        }
+
+        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+            // On success
+            addOnSuccessListener {
+                Log.d(TAG, getString(R.string.geofences_removed))
+
+                Toast.makeText(
+                    applicationContext,
+                    R.string.geofences_removed,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            // On failure
+            addOnFailureListener {
+                Log.d(TAG, getString(R.string.geofences_not_removed))
+            }
+        }
     }
     companion object {
         internal const val ACTION_GEOFENCE_EVENT =
